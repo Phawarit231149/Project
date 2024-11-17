@@ -1,0 +1,48 @@
+# -*- coding: utf-8 -*-
+"""
+Created on Sun Nov 17 19:58:09 2024
+
+@author: TNP
+"""
+import matplotlib.pyplot as plt
+from sys import exit
+import pandas as pd
+import numpy as np
+from skimage.feature import   graycomatrix, graycoprops
+from skimage.io import imread
+from PIL import Image
+from sklearn.metrics import confusion_matrix, accuracy_score
+
+dirname = "D:/Project/brain-tumor"
+imagedirname = dirname + "/images"
+image_number= "37"
+my_image=imread(imagedirname + "/Image" + image_number + ".jpg" , as_gray=True )
+my_image = (my_image*255).astype(int) 
+plt.figure()
+plt.imshow(my_image , cmap="gray")
+sum_pixel_values = 0
+n_pixels = 0
+for x in range(my_image.shape[0]):        
+    for y in range(my_image.shape[1]):
+        if my_image[x,y] >= 1:
+            n_pixels = n_pixels + 1
+            sum_pixel_values = sum_pixel_values + my_image[x,y]
+avg_pixel_values = sum_pixel_values/n_pixels
+avg_pixel_values = np.floor(avg_pixel_values)
+
+new=144
+avg=avg_pixel_values 
+mod=my_image
+m1 = (255-new)/(255-avg)
+m2 = (new-32)/(avg-32)
+for x in range(my_image.shape[0]):        
+    for y in range(my_image.shape[1]):
+        if mod[x,y] >= avg:
+            mod[x,y] = np.floor(255+(m1*(mod[x,y]-255)))
+          
+        elif mod[x,y] >= 32:
+            mod[x,y] = np.floor(32+(m2*(mod[x,y]-32)))
+
+plt.figure()
+plt.figure()
+plt.imshow(my_image, cmap="gray")
